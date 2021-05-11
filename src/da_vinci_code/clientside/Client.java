@@ -10,11 +10,13 @@ import java.io.OutputStreamWriter;
 import java.util.Scanner;
 
 public class Client {
+	static GameManager gameManager;
+	static Socket socket;
 
     public static void main(String[] args) {
         try {
             // 1. 소켓 생성
-            Socket socket = new Socket("localhost", 5001);// 2. 연결 요청
+            socket = new Socket("localhost", 5001);// 2. 연결 요청
             // 3. 받기 전용 스레드 실행
             Receiver receiver = new Receiver(socket);
             receiver.start();

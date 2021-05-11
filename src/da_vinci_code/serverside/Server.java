@@ -9,14 +9,16 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Server {
+	static ArrayList<GameManager> gameManager; // 각 방마다 gamemanager 존재
+	static ServerSocket server;
+
     public static void main(String[] args) {
-
         try {
-
-            ServerSocket server = new ServerSocket(5001);
+            server = new ServerSocket(5001);
             while (true) {
                 // 1. 소켓 생성(bind 생략 가능)
                 // 2. 접속 수락

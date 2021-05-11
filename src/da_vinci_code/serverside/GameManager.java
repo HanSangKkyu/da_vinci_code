@@ -11,7 +11,64 @@ public class GameManager {
 	Logger logger; 
 	Tile lastTile; // 방금 플레이어에게 부여한 타일 정보 
 	
+	public int getRoom_id() {
+		return Room_id;
+	}
+
+	public void setRoom_id(int room_id) {
+		Room_id = room_id;
+	}
+
+	public int getLimit() {
+		return limit;
+	}
+
+	public void setLimit(int limit) {
+		this.limit = limit;
+	}
+
+	public ArrayList<Player> getPlayer() {
+		return player;
+	}
+
+	public void setPlayer(ArrayList<Player> player) {
+		this.player = player;
+	}
+
+	public int getNowTurnPlayerId() {
+		return nowTurnPlayerId;
+	}
+
+	public void setNowTurnPlayerId(int nowTurnPlayerId) {
+		this.nowTurnPlayerId = nowTurnPlayerId;
+	}
+
+	public ArrayList<Tile> getRemainTile() {
+		return remainTile;
+	}
+
+	public void setRemainTile(ArrayList<Tile> remainTile) {
+		this.remainTile = remainTile;
+	}
+
+	public Logger getLogger() {
+		return logger;
+	}
+
+	public void setLogger(Logger logger) {
+		this.logger = logger;
+	}
+
+	public Tile getLastTile() {
+		return lastTile;
+	}
+
+	public void setLastTile(Tile lastTile) {
+		this.lastTile = lastTile;
+	}
+
 	void initGameData() {
+		// 하나의 게임에 대한 모든 정보를 초기화 한다.
 		
 	}
 

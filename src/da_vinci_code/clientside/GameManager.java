@@ -14,6 +14,78 @@ public class GameManager {
 	ArrayList<Tile> remainTile; // 바닥에 깔린 타일 
 	Logger logger; // 로그 
 	
+	public Socket getSocket() {
+		return socket;
+	}
+
+	public void setSocket(Socket socket) {
+		this.socket = socket;
+	}
+
+	public int getRoom_id() {
+		return Room_id;
+	}
+
+	public void setRoom_id(int room_id) {
+		Room_id = room_id;
+	}
+
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	public int getLimit() {
+		return limit;
+	}
+
+	public void setLimit(int limit) {
+		this.limit = limit;
+	}
+
+	public Player getMe() {
+		return me;
+	}
+
+	public void setMe(Player me) {
+		this.me = me;
+	}
+
+	public ArrayList<Player> getPlayer() {
+		return player;
+	}
+
+	public void setPlayer(ArrayList<Player> player) {
+		this.player = player;
+	}
+
+	public int getNowTurnPlayerId() {
+		return nowTurnPlayerId;
+	}
+
+	public void setNowTurnPlayerId(int nowTurnPlayerId) {
+		this.nowTurnPlayerId = nowTurnPlayerId;
+	}
+
+	public ArrayList<Tile> getRemainTile() {
+		return remainTile;
+	}
+
+	public void setRemainTile(ArrayList<Tile> remainTile) {
+		this.remainTile = remainTile;
+	}
+
+	public Logger getLogger() {
+		return logger;
+	}
+
+	public void setLogger(Logger logger) {
+		this.logger = logger;
+	}
+
 	void Main() {
 		// 1.로그인 2.종료   선택(1,2): 
 	}
