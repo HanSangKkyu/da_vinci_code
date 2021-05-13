@@ -9,12 +9,14 @@ import java.util.ArrayList;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import da_vinci_code.serverside.*;
 
 class Receiver extends Thread {
 	private Socket socket = null;
 	private Server server = null;
 
 	public Receiver(Socket socket, Server server) {
+		super();
 		this.socket = socket;
 		this.server = server;
 	}
@@ -27,7 +29,6 @@ class Receiver extends Thread {
 			BufferedInputStream bis = new BufferedInputStream(is);
 			InputStreamReader reader = new InputStreamReader(bis, "UTF-8");
 			char[] arr = new char[10000];
-//			String msg = "";
 			reader.read(arr);
 			String msg = new String(arr).replace('\0', ' ');
 			System.out.println("["+socket+" 가 보낸 msg] " + msg);
@@ -70,22 +71,26 @@ class Receiver extends Thread {
 		for (int i = 0; i < server.gameManager.size(); i++) {
 			if (limit == server.gameManager.get(i).getLimit() && server.gameManager.get(i).getPlayer().size() < limit) {
 				// 조건에 맞는 방이 있다면
-				server.gameManager.get(i).addPlayer(++server.nextPlayerID);
+				server.gameManager.get(i).addPlayer(++server.nextPlayerID, socket);
 				flag = true;
 				
 				System.out.println(socket+"이 "+server.nextPlayerID+"를 부여받고 "+server.gameManager.get(i).getRoom_id()+"방에 배정 됨 ");
+				
+				// 방에 모든 플레이어들이 들어왔는지 확인
+				server.gameManager.get(i).checkRoomPlayerNum();
 				break;
 			}
 		}
 
 		if (!flag) {
 			GameManager gameManager = new GameManager(++server.nextRoomID, limit);
-			gameManager.addPlayer(++server.nextPlayerID);
+			gameManager.addPlayer(++server.nextPlayerID, socket);
 			server.gameManager.add(gameManager);
 			
 			System.out.println(socket+"이 "+server.nextPlayerID+"를 부여받고 "+server.nextRoomID+"방에 배정 됨 ");
 		}
 
+		
 	}
 
 }

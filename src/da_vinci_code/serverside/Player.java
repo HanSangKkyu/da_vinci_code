@@ -1,16 +1,25 @@
 package da_vinci_code.serverside;
 
+import java.net.Socket;
 import java.util.ArrayList;
 
 public class Player {
 	int id; // 로그인시 부여 받는 고유의 값 
 	ArrayList<Tile> tile; // 플레이어가 보유한 타일 정보 
 	boolean isAlive; // 해당 플레이어가 살아있는지
+	Socket socket;
 	
-	public Player(int id) {
+	public Player(){
+		super();
+		this.isAlive = true;
+		this.tile = new ArrayList<Tile>();
+	}
+	
+	public Player(int id, Socket socket){
 		super();
 		this.id = id;
-		
+		this.socket = socket;
+
 		this.isAlive = true;
 		this.tile = new ArrayList<Tile>();
 	}
@@ -32,6 +41,12 @@ public class Player {
 	}
 	public void setAlive(boolean isAlive) {
 		this.isAlive = isAlive;
+	}
+	public Socket getSocket() {
+		return socket;
+	}
+	public void setSocket(Socket socket) {
+		this.socket = socket	;
 	}
 
 }

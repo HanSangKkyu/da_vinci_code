@@ -46,13 +46,16 @@ public class Client {
 				try {
 					// 1. 소켓 생성
 					socket = new Socket("localhost", 5001);// 2. 연결 요청
-					// 3. 받기 전용 스레드 실행
-					Receiver receiver = new Receiver(socket);
-					receiver.start();
+					
 
 					// gameManager 생성
 					gameManager = new GameManager(socket);
 					roomSelect();
+					
+					// 3. 받기 전용 스레드 실행
+					Receiver receiver = new Receiver(socket, gameManager);
+					receiver.start();
+
 
 				} catch (Exception e) {
 					System.out.println(e.toString());

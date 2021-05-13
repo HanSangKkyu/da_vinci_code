@@ -4,6 +4,10 @@ import java.util.ArrayList;
 
 public class Logger {
 	ArrayList<String> log;
+	
+	public Logger() {
+		this.log = new ArrayList<String>();
+	}
 
 	public ArrayList<String> getLog() {
 		return log;

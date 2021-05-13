@@ -9,6 +9,10 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.util.Scanner;
 
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+
 public class Client {
 
     public static void main(String[] args) {
@@ -43,12 +47,20 @@ class ClientReceiver extends Thread {
             BufferedInputStream bis = new BufferedInputStream(is);
             InputStreamReader reader = new InputStreamReader(bis, "UTF-8");
             char[] arr = new char[100];
-            while (is != null) { // 스트림으로 반복문 제어
+            while (is != null) { // 스트림으로 반복문 제어\
                 // 5. 출력
                 reader.read(arr);
                 // ㅁㅁㅁ는 \0이고 배열의 공백을 의미한다.
                 String msg = new String(arr).replace('\0', ' ');
                 System.out.println("[상대] " + msg);
+                JSONParser parser = new JSONParser();
+                JSONObject jsonObj = (JSONObject) parser.parse(msg);
+				String title = (String) jsonObj.get("title");
+				System.out.println(title);
+				JSONArray arr1 = (JSONArray)jsonObj.get("arr1");
+				
+				
+				System.out.println(arr1.get(0).toString()+arr1.get(1)+arr1.get(2));
 
                 // 긴 문장 후 짧은 문장이 들어올 경우 이전 값과 섞여 들어온다.
                 // 초기화
@@ -61,6 +73,25 @@ class ClientReceiver extends Thread {
         }
     }
 
+	public String getMsg() {
+		// 클라이언트가 보낸 메시지를 문자열로 반환한다
+		// InputStream으로 보내온 메시지를 받는다.
+		try {
+			InputStream is = socket.getInputStream(); // 핵심
+			BufferedInputStream bis = new BufferedInputStream(is);
+			InputStreamReader reader = new InputStreamReader(bis, "UTF-8");
+			char[] arr = new char[10000];
+			reader.read(arr);
+			String msg = new String(arr).replace('\0', ' ');
+			System.out.println("["+socket+" 가 보낸 msg] " + msg);
+			arr = new char[10000];
+			return msg;
+
+		} catch (Exception e) {
+			System.out.println(e.toString());
+		}
+		return null;
+	}
 }
 
 class ClientSender extends Thread {

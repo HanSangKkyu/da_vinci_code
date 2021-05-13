@@ -4,6 +4,11 @@ import java.util.ArrayList;
 
 public class Logger {
 	ArrayList<String> log;
+	
+	public Logger() {
+		super();
+		log = new ArrayList<String>();
+	}
 
 	public ArrayList<String> getLog() {
 		return log;

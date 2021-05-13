@@ -22,6 +22,7 @@ public class Server {
 	static int nextPlayerID; // 다음에 플레이어가 새로 생기면 부여할 id값
 	
 	public Server() {
+		super();
 		this.gameManager = new ArrayList<GameManager>();
 		this.nextRoomID = 0;
 		this.nextPlayerID = 0;

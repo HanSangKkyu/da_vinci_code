@@ -10,6 +10,14 @@ public class Player {
 	boolean isAlive; // 해당 플레이어가 살아있는지 
 
 	boolean isActive; // 턴을 받아서 입력을 할 수 있는 상태인지, 서버에 요청을 보낼 수 있는지
+	
+	public Player(int id, ArrayList<Tile> tile, boolean isAlive, boolean isActive) {
+		super();
+		this.id = id;
+		this.tile = tile;
+		this.isAlive = isAlive;
+		this.isActive = isActive;
+	}
 
 	public int getId() {
 		return id;
