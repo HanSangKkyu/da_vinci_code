@@ -49,7 +49,7 @@ public class Receiver extends Thread {
 				switch (title) {
 				case "GAME_INFO":
 					gameManager.updateGameInfo(jsonObj);
-				break;
+					break;
 				}
 			} catch (Exception e) {
 				// TODO Auto-generated catch block

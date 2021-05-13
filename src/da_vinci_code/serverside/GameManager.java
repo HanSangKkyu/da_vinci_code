@@ -86,7 +86,6 @@ public class GameManager {
 		this.lastTile = lastTile;
 	}
 
-
 	public static OutputStreamWriter getWriter(Socket socket) {
 		// 서버에게 메세지를 보낼 때 사용하는 wirter를 얻는
 		OutputStreamWriter writer = null;
@@ -94,19 +93,19 @@ public class GameManager {
 			OutputStream os = socket.getOutputStream();
 			BufferedOutputStream bos = new BufferedOutputStream(os);
 			writer = new OutputStreamWriter(bos, "UTF-8");
-		}catch(Exception e) {
+		} catch (Exception e) {
 			System.out.println(e.toString());
 		}
-		
+
 		return writer;
 	}
-	
+
 	void initGameData() {
 		// 하나의 게임에 대한 모든 정보를 초기화 한다.
 
 		// 첫 차례 지정
 		this.nowTurnPlayerId = player.get(0).getId(); // Player.id
-		System.out.println("first player is "+ this.nowTurnPlayerId);
+		System.out.println("first player is " + this.nowTurnPlayerId);
 
 		// 바닥에 남은 타일 초기
 		for (int i = 0; i < 12; i++) {
@@ -123,20 +122,19 @@ public class GameManager {
 
 		// 플레이어에게 타일을 나눠준다.
 		int tilePosion = 0;
-		if(player.size() == 4){
+		if (player.size() == 4) {
 			// 플레이어 4 명 타일 3개 씩
 			tilePosion = 3;
-		}else{
+		} else {
 			// 플레이어 2, 3 명 타일 4개 씩
 			tilePosion = 4;
 		}
-		
-		for(int i=0;i<player.size();i++){
-			for(int j=0;j<tilePosion;j++){
+
+		for (int i = 0; i < player.size(); i++) {
+			for (int j = 0; j < tilePosion; j++) {
 				addTileToPlayerFromRemainTile(player.get(i).getId());
 			}
 		}
-
 
 	}
 
@@ -179,18 +177,18 @@ public class GameManager {
 		// 시킨다.
 	}
 
-	void addTileToPlayerFromRemainTile(int id){
-		int randNum = (int)(Math.random() * remainTile.size());
+	void addTileToPlayerFromRemainTile(int id) {
+		int randNum = (int) (Math.random() * remainTile.size());
 		Tile tmpTile = new Tile(remainTile.get(randNum));
 
 		player.get(idToIndex(id)).getTile().add(tmpTile);
 
 		remainTile.remove(randNum);
 	}
-	
-	int idToIndex(int id){
-		for(int i = 0;i< player.size();i++) {
-			if(player.get(i).getId() == id) {
+
+	int idToIndex(int id) {
+		for (int i = 0; i < player.size(); i++) {
+			if (player.get(i).getId() == id) {
 				return i;
 			}
 		}
@@ -208,7 +206,7 @@ public class GameManager {
 	void checkRoomPlayerNum() {
 		// 방에 모든 플레이어가 입장했는지 검사한다.
 		if (player.size() == limit) {
-			System.out.println(room_id + "에 "+limit+"명이 있다.");
+			System.out.println(room_id + "에 " + limit + "명이 있다.");
 			initGameData();
 			startGame();
 		}
@@ -216,21 +214,20 @@ public class GameManager {
 
 	void sendGameInfo() {
 		// 플레이어들에게 현재 게임 상태를 보낸다.
-		for(int t = 0;t<player.size();t++) {
-			try{
-				OutputStreamWriter writer = getWriter( player.get(t).getSocket());
+		for (int t = 0; t < player.size(); t++) {
+			try {
+				OutputStreamWriter writer = getWriter(player.get(t).getSocket());
 				JSONObject jsonObj = new JSONObject();
 				jsonObj.put("title", "GAME_INFO");
 				JSONArray ja = new JSONArray();
-				for(int i =0;i<player.size();i++){
+				for (int i = 0; i < player.size(); i++) {
 					JSONObject pjo = new JSONObject();
 					pjo.put("id", player.get(i).getId());
 					pjo.put("isAlive", player.get(i).isAlive());
 //					pjo.put("socket", player.get(i).getSocket());
 
-
 					JSONArray tja = new JSONArray();
-					for(int j= 0;j<player.get(i).getTile().size();j++){
+					for (int j = 0; j < player.get(i).getTile().size(); j++) {
 						JSONObject tjo = new JSONObject();
 						tjo.put("color", player.get(i).getTile().get(j).getColor());
 						tjo.put("num", player.get(i).getTile().get(j).getNum());
@@ -240,12 +237,12 @@ public class GameManager {
 					pjo.put("tile", tja);
 					ja.add(pjo);
 				}
-				
+
 				jsonObj.put("player", ja);
 				jsonObj.put("nowTurnPlayerId", nowTurnPlayerId);
 
 				JSONArray rtja = new JSONArray();
-				for(int i =0;i<remainTile.size();i++){
+				for (int i = 0; i < remainTile.size(); i++) {
 					JSONObject rtjo = new JSONObject();
 					rtjo.put("color", remainTile.get(i).getColor());
 					rtjo.put("num", remainTile.get(i).getNum());
@@ -254,27 +251,27 @@ public class GameManager {
 					rtja.add(rtjo);
 				}
 				jsonObj.put("remainTile", rtja);
-				
+
 				JSONArray lja = new JSONArray();
-				for(int i =0;i<logger.getLog().size();i++){
+				for (int i = 0; i < logger.getLog().size(); i++) {
 					lja.add(logger.getLog().get(i));
 				}
 				jsonObj.put("logger", lja);
-				
+
 				JSONObject ltjo = new JSONObject();
 				ltjo.put("color", lastTile.getColor());
 				ltjo.put("num", lastTile.getNum());
 				ltjo.put("isOpen", lastTile.isOpen());
 				jsonObj.put("lastTile", ltjo);
-				
+
 				String json = jsonObj.toJSONString();
-				
+
 				writer.write(json);
 				writer.flush();
 			} catch (Exception e) {
 				System.out.println(e.toString());
 			}
 		}
-		
+
 	}
 }

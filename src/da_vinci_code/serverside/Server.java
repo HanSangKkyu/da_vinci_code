@@ -12,15 +12,15 @@ import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-import org.json.simple.JSONObject; 
-import org.json.simple.parser.JSONParser; 
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 public class Server {
 	static ArrayList<GameManager> gameManager; // 각 방마다 gamemanager 존재
-	static int nextRoomID; // 다음에 방이 만들어지면 부여할 room id값 
+	static int nextRoomID; // 다음에 방이 만들어지면 부여할 room id값
 	static int nextPlayerID; // 다음에 플레이어가 새로 생기면 부여할 id값
-	
+
 	public Server() {
 		super();
 		this.gameManager = new ArrayList<GameManager>();
@@ -31,7 +31,7 @@ public class Server {
 	public static void main(String[] args) {
 
 		Server serverObj = new Server();
-		
+
 		try {
 			ServerSocket server = new ServerSocket(5001);
 			while (true) {
@@ -52,5 +52,3 @@ public class Server {
 	}
 
 }
-
-

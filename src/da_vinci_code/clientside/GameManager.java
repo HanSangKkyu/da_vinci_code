@@ -126,8 +126,6 @@ public class GameManager {
 			JSONObject pjo = (JSONObject) pja.get(i);
 
 			int t_id = ((Long) pjo.get("id")).intValue();
-			System.out.println("asdf "+pjo.get("isAlive"));
-//			boolean t_isAlive = Boolean.parseBoolean((String) pjo.get("isAlive"));
 			boolean t_isAlive = (boolean) pjo.get("isAlive");
 			ArrayList<Tile> t_tile = new ArrayList<Tile>();
 
@@ -136,25 +134,22 @@ public class GameManager {
 				JSONObject tjo = (JSONObject) tja.get(j);
 				String t_color = (String) tjo.get("color"); // “black” or “white”
 				int t_num = ((Long) tjo.get("num")).intValue(); // 0~11
-//				boolean t_isOpen = Boolean.parseBoolean((String) tjo.get("isOpen")); 
-				boolean t_isOpen = (boolean)tjo.get("isOpen"); 
-				
+				boolean t_isOpen = (boolean) tjo.get("isOpen");
+
 				t_tile.add(new Tile(t_color, t_num, t_isOpen));
 			}
 
-			// 내정보면 me에도 채우기 
-			if(t_id == id) {
+			// 내정보면 me에도 채우기
+			if (t_id == id) {
 				me = new Player(t_id, t_tile, t_isAlive, false);
 			}
-			
-			
+
 			// 자기 차례면
 			if (t_id == nowTurnPlayerId) {
 				player.add(new Player(t_id, t_tile, t_isAlive, true));
 			} else {
 				player.add(new Player(t_id, t_tile, t_isAlive, false));
 			}
-			
 
 		}
 
@@ -177,7 +172,6 @@ public class GameManager {
 			logger.addLog(t_text);
 
 		}
-		
 
 	}
 
