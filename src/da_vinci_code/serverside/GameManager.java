@@ -3,20 +3,33 @@ package da_vinci_code.serverside;
 import java.util.ArrayList;
 
 public class GameManager {
-	int Room_id; // 각 방를 구분하기 위한 고유의 값 
+	int room_id; // 각 방를 구분하기 위한 고유의 값 
 	int limit; // 2명, 3명, 4명 플레이 가능 방 
 	ArrayList<Player> player; 
 	int nowTurnPlayerId; // Player.id 
 	ArrayList<Tile> remainTile; // 바닥에 있는 타일 
 	Logger logger; 
 	Tile lastTile; // 방금 플레이어에게 부여한 타일 정보 
+
 	
+	public GameManager(int room_id, int limit) {
+		super();
+		this.room_id = room_id;
+		this.limit = limit;
+		
+		this.player = new ArrayList<Player>();
+		this.nowTurnPlayerId = 0;
+		this.remainTile = new ArrayList<Tile>();
+		this.logger = null;
+		this.lastTile = null;
+	}
+
 	public int getRoom_id() {
-		return Room_id;
+		return room_id;
 	}
 
 	public void setRoom_id(int room_id) {
-		Room_id = room_id;
+		this.room_id = room_id;
 	}
 
 	public int getLimit() {
@@ -72,8 +85,9 @@ public class GameManager {
 		
 	}
 
-	void addPlayer() {
+	void addPlayer(int player_id) {
 		// 로그인한 클라이언트에게 id를 부여하고 player에 add  
+		player.add(new Player(player_id));
 	}
 
 	void removePlayer() {
