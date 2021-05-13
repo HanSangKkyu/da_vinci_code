@@ -126,7 +126,9 @@ public class GameManager {
 			JSONObject pjo = (JSONObject) pja.get(i);
 
 			int t_id = ((Long) pjo.get("id")).intValue();
-			boolean t_isAlive = Boolean.parseBoolean((String) pjo.get("isAlive"));
+			System.out.println("asdf "+pjo.get("isAlive"));
+//			boolean t_isAlive = Boolean.parseBoolean((String) pjo.get("isAlive"));
+			boolean t_isAlive = (boolean) pjo.get("isAlive");
 			ArrayList<Tile> t_tile = new ArrayList<Tile>();
 
 			JSONArray tja = (JSONArray) pjo.get("tile");
@@ -134,7 +136,9 @@ public class GameManager {
 				JSONObject tjo = (JSONObject) tja.get(j);
 				String t_color = (String) tjo.get("color"); // “black” or “white”
 				int t_num = ((Long) tjo.get("num")).intValue(); // 0~11
-				boolean t_isOpen = Boolean.parseBoolean((String) tjo.get("isOpen")); // 해당 타일이 다른 플레이어들에게 밝혀진 상태인지
+//				boolean t_isOpen = Boolean.parseBoolean((String) tjo.get("isOpen")); 
+				boolean t_isOpen = (boolean)tjo.get("isOpen"); 
+				
 				t_tile.add(new Tile(t_color, t_num, t_isOpen));
 			}
 
@@ -161,7 +165,7 @@ public class GameManager {
 
 			String t_color = (String) rtjo.get("color");
 			int t_num = ((Long) rtjo.get("num")).intValue();
-			boolean t_isOpen = Boolean.parseBoolean((String) rtjo.get("isOpen"));
+			boolean t_isOpen = (boolean) rtjo.get("isOpen");
 
 			remainTile.add(new Tile(t_color, t_num, t_isOpen));
 		}
