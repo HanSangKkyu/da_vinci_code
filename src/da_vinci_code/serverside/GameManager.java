@@ -27,7 +27,7 @@ public class GameManager {
 		this.nowTurnPlayerId = 0;
 		this.remainTile = new ArrayList<Tile>();
 		this.logger = new Logger();
-		this.lastTile = null;
+		this.lastTile = new Tile();
 	}
 
 	public int getRoom_id() {
@@ -106,6 +106,7 @@ public class GameManager {
 
 		// 첫 차례 지정
 		this.nowTurnPlayerId = player.get(0).getId(); // Player.id
+		System.out.println("first player is "+ this.nowTurnPlayerId);
 
 		// 바닥에 남은 타일 초기
 		for (int i = 0; i < 12; i++) {
@@ -128,8 +129,8 @@ public class GameManager {
 		}else{
 			// 플레이어 2, 3 명 타일 4개 씩
 			tilePosion = 4;
-
 		}
+		
 		for(int i=0;i<player.size();i++){
 			for(int j=0;j<tilePosion;j++){
 				addTileToPlayerFromRemainTile(player.get(i).getId());
@@ -154,9 +155,6 @@ public class GameManager {
 		addTileToPlayerFromRemainTile(nowTurnPlayerId);
 		sendGameInfo();
 
-
-		
-		
 	}
 
 	int getNextPlayerId() {
@@ -185,7 +183,7 @@ public class GameManager {
 		int randNum = (int)(Math.random() * remainTile.size());
 		Tile tmpTile = new Tile(remainTile.get(randNum));
 
-		player.get(idToIndex(nowTurnPlayerId)).getTile().add(tmpTile);
+		player.get(idToIndex(id)).getTile().add(tmpTile);
 
 		remainTile.remove(randNum);
 	}
@@ -210,6 +208,7 @@ public class GameManager {
 	void checkRoomPlayerNum() {
 		// 방에 모든 플레이어가 입장했는지 검사한다.
 		if (player.size() == limit) {
+			System.out.println(room_id + "에 "+limit+"명이 있다.");
 			initGameData();
 			startGame();
 		}
@@ -217,62 +216,65 @@ public class GameManager {
 
 	void sendGameInfo() {
 		// 플레이어들에게 현재 게임 상태를 보낸다.
-		try{
-			OutputStreamWriter writer = getWriter(player.get(idToIndex(nowTurnPlayerId)).getSocket());
-			JSONObject jsonObj = new JSONObject();
-			jsonObj.put("title", "GAME_INFO");
-			JSONArray ja = new JSONArray();
-			for(int i =0;i<player.size();i++){
-				JSONObject pjo = new JSONObject();
-				pjo.put("id", player.get(i).getId());
-				pjo.put("isAlive", player.get(i).isAlive());
-				pjo.put("socket", player.get(i).getSocket());
+		for(int t = 0;t<player.size();t++) {
+			try{
+				OutputStreamWriter writer = getWriter( player.get(t).getSocket());
+				JSONObject jsonObj = new JSONObject();
+				jsonObj.put("title", "GAME_INFO");
+				JSONArray ja = new JSONArray();
+				for(int i =0;i<player.size();i++){
+					JSONObject pjo = new JSONObject();
+					pjo.put("id", player.get(i).getId());
+					pjo.put("isAlive", player.get(i).isAlive());
+//					pjo.put("socket", player.get(i).getSocket());
 
 
-				JSONArray tja = new JSONArray();
-				for(int j= 0;j<player.get(i).getTile().size();j++){
-					JSONObject tjo = new JSONObject();
-					tjo.put("color", player.get(i).getTile().get(j).getColor());
-					tjo.put("num", player.get(i).getTile().get(j).getNum());
-					tjo.put("isOpen", player.get(i).getTile().get(j).isOpen());
-					tja.add(tjo);
+					JSONArray tja = new JSONArray();
+					for(int j= 0;j<player.get(i).getTile().size();j++){
+						JSONObject tjo = new JSONObject();
+						tjo.put("color", player.get(i).getTile().get(j).getColor());
+						tjo.put("num", player.get(i).getTile().get(j).getNum());
+						tjo.put("isOpen", player.get(i).getTile().get(j).isOpen());
+						tja.add(tjo);
+					}
+					pjo.put("tile", tja);
+					ja.add(pjo);
 				}
-				pjo.put("tile", tja);
-				ja.add(pjo);
-			}
-			
-			jsonObj.put("player", ja);
-			jsonObj.put("nowTurnPlayerId", nowTurnPlayerId);
+				
+				jsonObj.put("player", ja);
+				jsonObj.put("nowTurnPlayerId", nowTurnPlayerId);
 
-			JSONArray rtja = new JSONArray();
-			for(int i =0;i<remainTile.size();i++){
-				JSONObject rtjo = new JSONObject();
-				rtjo.put("color", remainTile.get(i).getColor());
-				rtjo.put("num", remainTile.get(i).getNum());
-				rtjo.put("isOpen", remainTile.get(i).isOpen());
+				JSONArray rtja = new JSONArray();
+				for(int i =0;i<remainTile.size();i++){
+					JSONObject rtjo = new JSONObject();
+					rtjo.put("color", remainTile.get(i).getColor());
+					rtjo.put("num", remainTile.get(i).getNum());
+					rtjo.put("isOpen", remainTile.get(i).isOpen());
 
-				rtja.add(rtjo);
+					rtja.add(rtjo);
+				}
+				jsonObj.put("remainTile", rtja);
+				
+				JSONArray lja = new JSONArray();
+				for(int i =0;i<logger.getLog().size();i++){
+					lja.add(logger.getLog().get(i));
+				}
+				jsonObj.put("logger", lja);
+				
+				JSONObject ltjo = new JSONObject();
+				ltjo.put("color", lastTile.getColor());
+				ltjo.put("num", lastTile.getNum());
+				ltjo.put("isOpen", lastTile.isOpen());
+				jsonObj.put("lastTile", ltjo);
+				
+				String json = jsonObj.toJSONString();
+				
+				writer.write(json);
+				writer.flush();
+			} catch (Exception e) {
+				System.out.println(e.toString());
 			}
-			jsonObj.put("remainTile", rtja);
-			
-			JSONArray lja = new JSONArray();
-			for(int i =0;i<logger.getLog().size();i++){
-				lja.add(logger.getLog().get(i));
-			}
-			jsonObj.put("logger", lja);
-			
-			JSONObject ltjo = new JSONObject();
-			ltjo.put("color", lastTile.getColor());
-			ltjo.put("num", lastTile.getNum());
-			ltjo.put("isOpen", lastTile.isOpen());
-			jsonObj.put("lastTile", ltjo);
-			
-			String json = jsonObj.toJSONString();
-			
-			writer.write(json);
-			writer.flush();
-		} catch (Exception e) {
-			System.out.println(e.toString());
 		}
+		
 	}
 }
