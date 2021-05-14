@@ -1,5 +1,8 @@
 package da_vinci_code.clientside;
 
+import java.io.BufferedOutputStream;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -94,11 +97,31 @@ public class GameManager {
 		this.logger = logger;
 	}
 
+	public static void send(Socket socket, JSONObject jsonObj) {
+		// 서버에게 메세지를 보낼 때 사용하는 wirter를 얻는
+		OutputStreamWriter writer = null;
+		try {
+			OutputStream os = socket.getOutputStream();
+			BufferedOutputStream bos = new BufferedOutputStream(os);
+			writer = new OutputStreamWriter(bos, "UTF-8");
+
+			String json = jsonObj.toJSONString();
+			writer.write(json);
+			writer.flush();
+		} catch (Exception e) {
+			System.out.println(e.toString());
+		}
+
+		return;
+	}
+
 	public void showLog() {
 		// 플레이어들이 한 행동에 대해 보여준다.
 	}
 
 	public void showGameInfo() {
+		System.out.println("현재 턴 : player " + nowTurnPlayerId);
+
 		// 플레이어들의 타일 상태, 내가 가진 타일, 바닥에 깔린 타일 정보 출력
 		int remainTileBlackNum = 0;
 		int remainTileWhiteNum = 0;
@@ -136,11 +159,11 @@ public class GameManager {
 			}
 			System.out.println();
 		}
-		
+
 		System.out.println();
 
 		ArrayList<Tile> tiles = me.getTile();
-		System.out.printf("my id("+id+") :");
+		System.out.printf("my id(" + id + ") :");
 		for (int j = 0; j < tiles.size(); j++) {
 			String colorPrint = "";
 			if (tiles.get(j).getColor().equals("black")) {
@@ -151,15 +174,52 @@ public class GameManager {
 
 			System.out.printf(" " + colorPrint + tiles.get(j).getNum());
 		}
-		
+
 	}
 
 	public void Guess() {
-		// 어떤 플레이어의 어떤 타일을 맞출 건지 물어본다./ 서버에게 맞출 타일 정보를 보낸다.
+		// 어떤 플레이어의 어떤 타일을 맞출 건지 물어본다.
+		// 서버에게 맞출 타일 정보를 보낸다.
+		Scanner scan = new Scanner(System.in);
+		int target_id; // 타겟 플레이어 ID
+		int tileorder; // 왼쪽부터 몇번째 타일을 맞출 것인지
+		int guessNum; // 맞출 타일에 적힌 번호
+		System.out.println("<다른 플레이어의 타일 맞추기>");
+		System.out.printf("플레이어ID: ");
+		target_id = Integer.parseInt(scan.nextLine());
+		System.out.printf("몇번째 타일을 맞추겠습니까? (왼쪽부터 0,1,2,..) : ");
+		tileorder = Integer.parseInt(scan.nextLine());
+		System.out.printf("그 타일은 몇입니까? : ");
+		guessNum = Integer.parseInt(scan.nextLine());
+
+		JSONObject jo = new JSONObject();
+		jo.put("title", "GUESS");
+		jo.put("room_id", room_id);
+		jo.put("id", id);
+		jo.put("target_id", target_id);
+		jo.put("tileorder", tileorder);
+		jo.put("guessNum", guessNum);
+
+		send(socket, jo);
 	}
 
 	public void continueOrStop() {
 		// 계속 타일을 맞출 것인지 차례를 넘길 것인지 물어본다.
+		JSONObject jo = new JSONObject();
+		jo.put("title", "CONTINUE");
+		jo.put("room_id", room_id);
+		jo.put("id", id);
+		
+		System.out.printf("1. 계속 타일을 맞춘다 2.차례를 넘긴다: ");
+		Scanner scan = new Scanner(System.in);
+		int sel = Integer.parseInt(scan.nextLine());		
+		if (sel == 1) {
+			jo.put("isContinue", true);
+		} else if (sel == 2) {
+			jo.put("isContinue", false);
+		}
+		send(socket, jo);
+
 	}
 
 	public void exitOrStay() {
@@ -224,7 +284,7 @@ public class GameManager {
 			logger.addLog(t_text);
 
 		}
-		
+
 		room_id = ((Long) jo.get("room_id")).intValue();
 
 		sortTile();

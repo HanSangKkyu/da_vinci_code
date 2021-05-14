@@ -28,7 +28,7 @@ public class Receiver extends Thread {
 			char[] arr = new char[10000];
 			reader.read(arr);
 			String msg = new String(arr).replace('\0', ' ');
-			System.out.println("[서버로 부터 받은 msg] " + msg);
+			System.out.println("[서버로 부터 받은 msg] \n" + msg);
 			arr = new char[10000];
 
 			return msg;
@@ -50,7 +50,7 @@ public class Receiver extends Thread {
 					int indexofNum = msg.indexOf("}{");
 					if (indexofNum != -1) {
 						msg = msg.substring(0, indexofNum + 1);
-						System.out.println("[서버로 부터 받은 msg] " + msg);
+						System.out.println("[서버로 부터 받은 msg] \n" + msg);
 						process(msg);
 						msg = msg.substring(indexofNum + 1);
 					} else {
@@ -86,6 +86,14 @@ public class Receiver extends Thread {
 			gameManager.setRoom_id(room_id);
 			System.out.println("id: " + id + ", room_id: " + room_id + "에 배정되었습니다.");
 			break;
+		case "REQUEST_GUESS":
+			int id1 = ((Long) jsonObj.get("id")).intValue();
+			gameManager.Guess();
+			break;
+		case "CONTINUE": // 타일을 맞추고 계속 맞출지 물어본다.
+			gameManager.continueOrStop();
+			break;
+
 		}
 
 	}
