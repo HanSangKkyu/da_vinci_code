@@ -202,17 +202,41 @@ public class GameManager {
 
 	void checkGuessingTile(int room_id, int id, int target_id, int tileorder, int guessNum) throws IOException {
 		sortTile();
-		System.out.println(player.get(idToIndex(target_id)).getTile().get(tileorder).getNum() + " " + guessNum + " " + tileorder);
+		System.out.println(
+				player.get(idToIndex(target_id)).getTile().get(tileorder).getNum() + " " + guessNum + " " + tileorder);
 		// 플레이어의 타일 맞추기가 성공했는지 확인
 		if (player.get(idToIndex(target_id)).getTile().get(tileorder).getNum() == guessNum) {
 			System.out.println(id + " " + target_id + " 맞춤");
 			// isOpen을 true로 바꾼다.
 			openTileFromPlayer(target_id, tileorder);
 
-			// 계속 시도할지 물어본다.
-			JSONObject jo = new JSONObject();
-			jo.put("title", "CONTINUE");
-			send(player.get(idToIndex(id)).getSocket(), jo);
+			if (isGameEnd()) {
+				// 한명의 플레이어를 제외한 나머지 플레이어의 타일이 모두 뒤집혔는지 판단한다.
+				System.out.println("게임 끝");
+
+				// 우승자의 id를 찾는다.
+				int winner_id = 0;
+				for (int i = 0; i < player.size(); i++) {
+					if (player.get(i).isAlive() == true) {
+						winner_id = player.get(i).getId();
+						break;
+					}
+				}
+
+				// 플레이어들에게 알린다.
+				JSONObject jo = new JSONObject();
+				jo.put("title", "GAME_END");
+				jo.put("winner_id", winner_id);
+				for (int i = 0; i < player.size(); i++) {
+					send(player.get(i).getSocket(), jo);
+				}
+			} else {
+				// 계속 시도할지 물어본다.
+				JSONObject jo = new JSONObject();
+				jo.put("title", "CONTINUE");
+				send(player.get(idToIndex(id)).getSocket(), jo);
+			}
+
 		} else {
 			System.out.println(id + " " + target_id + " 못 맞춤");
 			// 방금 뽑은 타일을 보여준다.
@@ -227,7 +251,6 @@ public class GameManager {
 			// 다음 턴으로 넘어간다.
 			getNextPlayerId();
 			startTurn();
-//			requestGuess(nowTurnPlayerId);
 		}
 	}
 
@@ -235,9 +258,42 @@ public class GameManager {
 		// 로그 입력
 	}
 
-	void checkGameEnd() {
+	boolean isGameEnd() {
 		// 플레이어의 타일이 모두 뒤집혔는지 판단한다. 1명의 플레이어를 제외한 모든 플레이어들의 타일이 뒤집혔다면 모든 클라이언트들을 로그아웃
 		// 시킨다.
+
+		// 모든 타일이 뒤집힌 플레이어의 isAlive를 false로 만든다
+		for (int i = 0; i < player.size(); i++) {
+			if (player.get(i).isAlive() == false) {
+				continue;
+			}
+
+			int cntOpen = 0;
+			for (int j = 0; j < player.get(i).getTile().size(); j++) {
+				if (player.get(i).getTile().get(j).isOpen() == true) {
+					cntOpen++;
+				}
+			}
+			if (cntOpen == player.get(i).getTile().size()) {
+				// 모든 타일이 뒤집혔다면 isAlive를 false로 둔다.
+				player.get(i).setAlive(false);
+			}
+		}
+
+		// 최종 우승자가 나왔는지 판단한다.
+		int alivePlayerNum = 0;
+		for (int i = 0; i < player.size(); i++) {
+			if (player.get(i).isAlive() == true) {
+				alivePlayerNum++;
+			}
+		}
+
+		if (alivePlayerNum == 1) {
+			return true;
+		} else {
+			return false;
+		}
+
 	}
 
 	void addTileToPlayerFromRemainTile(int id) {
@@ -317,7 +373,6 @@ public class GameManager {
 		// 플레이어들에게 현재 게임 상태를 보낸다.
 		for (int t = 0; t < player.size(); t++) {
 			try {
-//				OutputStreamWriter writer = getWriter(player.get(t).getSocket());
 				JSONObject jsonObj = new JSONObject();
 				jsonObj.put("title", "GAME_INFO");
 				JSONArray ja = new JSONArray();
@@ -325,7 +380,6 @@ public class GameManager {
 					JSONObject pjo = new JSONObject();
 					pjo.put("id", player.get(i).getId());
 					pjo.put("isAlive", player.get(i).isAlive());
-//					pjo.put("socket", player.get(i).getSocket());
 
 					JSONArray tja = new JSONArray();
 					for (int j = 0; j < player.get(i).getTile().size(); j++) {
@@ -381,27 +435,19 @@ public class GameManager {
 	}
 
 	void sendID(int id, Socket socket, int roomNum) throws IOException {
-//		OutputStreamWriter writer = getWriter(socket);
 		JSONObject jo = new JSONObject();
 		jo.put("title", "SEND_ID");
 		jo.put("id", id);
 		jo.put("room_id", roomNum);
-//		String json = jo.toJSONString();
-//		writer.write(json);
-//		writer.flush();
 
 		send(socket, jo);
 	}
 
 	void requestGuess(int id) throws IOException {
 		// 플레이어에게 맞추기 단계를 시작하라고 요청한다.
-//		OutputStreamWriter writer = getWriter(player.get(idToIndex(id)).getSocket());
 		JSONObject jo = new JSONObject();
 		jo.put("title", "REQUEST_GUESS");
 		jo.put("id", id);
-//		String json = jo.toJSONString();
-//		writer.write(json);
-//		writer.flush();
 
 		send(player.get(idToIndex(id)).getSocket(), jo);
 	}
@@ -419,7 +465,6 @@ public class GameManager {
 			getNextPlayerId();
 			System.out.println("다음 차례는 " + nowTurnPlayerId);
 			startTurn();
-//			requestGuess(nowTurnPlayerId);
 		}
 	}
 }

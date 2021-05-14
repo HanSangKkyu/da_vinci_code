@@ -49,10 +49,8 @@ public class Receiver extends Thread {
 					// 여러 InputStream이 한번에 들어왔을 때 컨트롤
 					int indexofNum = msg.indexOf("}{");
 					if (indexofNum != -1) {
-						msg = msg.substring(0, indexofNum + 1);
-						System.out.println("[서버로 부터 받은 msg] \n" + msg);
-						process(msg);
-						msg = msg.substring(indexofNum + 1);
+						process(msg.substring(0, indexofNum + 1));
+						msg = msg.substring(indexofNum + 1, msg.length());
 					} else {
 						process(msg);
 						break;
@@ -67,6 +65,7 @@ public class Receiver extends Thread {
 	}
 
 	public void process(String msg) throws ParseException {
+		System.out.println("[인식된 msg] \n" + msg);
 
 		JSONParser parser = new JSONParser();
 		JSONObject jsonObj;
@@ -93,7 +92,10 @@ public class Receiver extends Thread {
 		case "CONTINUE": // 타일을 맞추고 계속 맞출지 물어본다.
 			gameManager.continueOrStop();
 			break;
-
+		case "GAME_END": // 타일을 맞추고 계속 맞출지 물어본다.
+			int winner_id = ((Long) jsonObj.get("winner_id")).intValue();
+			gameManager.gameEnd(winner_id);
+			break;
 		}
 
 	}

@@ -174,6 +174,7 @@ public class GameManager {
 
 			System.out.printf(" " + colorPrint + tiles.get(j).getNum());
 		}
+		System.out.println();
 
 	}
 
@@ -209,10 +210,10 @@ public class GameManager {
 		jo.put("title", "CONTINUE");
 		jo.put("room_id", room_id);
 		jo.put("id", id);
-		
+
 		System.out.printf("1. 계속 타일을 맞춘다 2.차례를 넘긴다: ");
 		Scanner scan = new Scanner(System.in);
-		int sel = Integer.parseInt(scan.nextLine());		
+		int sel = Integer.parseInt(scan.nextLine());
 		if (sel == 1) {
 			jo.put("isContinue", true);
 		} else if (sel == 2) {
@@ -290,12 +291,6 @@ public class GameManager {
 		sortTile();
 		showGameInfo();
 
-//		for (int i = 0; i < player.size(); i++) {
-//			for (int j = 0; j < player.get(i).getTile().size(); j++) {
-//				System.out.println(player.get(i).getTile().get(j).getNum());
-//			}
-//			System.out.println();
-//		}
 	}
 
 	public void updateLogger(Logger logger) {
@@ -379,5 +374,10 @@ public class GameManager {
 			}
 		}
 
+	}
+
+	void gameEnd(int winner_id) {
+		System.out.println("게임 끝");
+		System.out.println("우승자: plyaer " + winner_id);
 	}
 }
