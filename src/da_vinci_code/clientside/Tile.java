@@ -12,6 +12,13 @@ public class Tile {
 		this.isOpen = isOpen;
 	}
 	
+	public Tile(Tile tile) {
+		super();
+		this.color = tile.getColor();
+		this.num = tile.getNum();
+		this.isOpen= tile.isOpen();
+	}
+	
 	public String getColor() {
 		return color;
 	}

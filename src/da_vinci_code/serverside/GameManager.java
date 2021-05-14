@@ -5,6 +5,8 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -156,7 +158,7 @@ public class GameManager {
 	}
 
 	int getNextPlayerId() {
-		// nowTurnPlayerId값에 현재 턴인 플레이어의 id를 리턴
+		// nowTurnPlayerId값에 현재 턴인 플레이어의 id를 저장한다
 		return 0; // 임시
 	}
 
@@ -183,6 +185,8 @@ public class GameManager {
 
 		player.get(idToIndex(id)).getTile().add(tmpTile);
 
+		lastTile = new Tile(tmpTile);
+
 		remainTile.remove(randNum);
 	}
 
@@ -201,6 +205,41 @@ public class GameManager {
 
 	void sortTile() {
 		// 플레이어들의 타일을 순서대로 정렬한다.
+		// 두 번째 인자로 Comparator 객체를 익명객체로 만들어서 넘깁니다.
+		for (int i = 0; i < player.size(); i++) {
+			ArrayList<Tile> tiles = player.get(i).getTile();
+
+			for (int j = 0; j < tiles.size(); j++) {
+				for (int k = 0; k < tiles.size() - 1 - j; k++) {
+					if (tiles.get(k).getNum() > tiles.get(k + 1).getNum()) {
+						Tile tmp = new Tile(tiles.get(k));
+
+						tiles.get(k).setColor(tiles.get(k + 1).getColor());
+						tiles.get(k).setNum(tiles.get(k + 1).getNum());
+						tiles.get(k).setOpen(tiles.get(k + 1).isOpen());
+
+						tiles.get(k + 1).setColor(tmp.getColor());
+						tiles.get(k + 1).setNum(tmp.getNum());
+						tiles.get(k + 1).setOpen(tmp.isOpen());
+					} else if (tiles.get(k).getNum() == tiles.get(k + 1).getNum()) {
+						if (tiles.get(k).getColor() == "white") {
+							// 같으면 숫자면 검정색이 더 작은 값이다
+							Tile tmp = new Tile(tiles.get(k));
+
+							tiles.get(k).setColor(tiles.get(k + 1).getColor());
+							tiles.get(k).setNum(tiles.get(k + 1).getNum());
+							tiles.get(k).setOpen(tiles.get(k + 1).isOpen());
+
+							tiles.get(k + 1).setColor(tmp.getColor());
+							tiles.get(k + 1).setNum(tmp.getNum());
+							tiles.get(k + 1).setOpen(tmp.isOpen());
+						}
+
+					}
+				}
+			}
+		}
+
 	}
 
 	void checkRoomPlayerNum() {

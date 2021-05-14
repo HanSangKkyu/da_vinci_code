@@ -100,6 +100,18 @@ public class GameManager {
 
 	public void showGameInfo() {
 		// 플레이어들의 타일 상태, 내가 가진 타일, 바닥에 깔린 타일 정보 출력
+		int remainTileBlackNum = 0;
+		int remainTileWhiteNum = 0;
+		for (int i = 0; i < remainTile.size(); i++) {
+			if (remainTile.get(i).getColor() == "black") {
+				remainTileBlackNum++;
+			} else if (remainTile.get(i).getColor() == "white") {
+				remainTileWhiteNum++;
+			}
+		}
+		System.out.println("■:" + remainTileBlackNum + ", □:" + remainTileWhiteNum);
+		System.out.println("");
+		System.out.println("■:" + remainTileBlackNum + ", □:" + remainTileWhiteNum);
 	}
 
 	public void Guess() {
@@ -173,6 +185,14 @@ public class GameManager {
 
 		}
 
+		sortTile();
+
+		for (int i = 0; i < player.size(); i++) {
+			for (int j = 0; j < player.get(i).getTile().size(); j++) {
+				System.out.println(player.get(i).getTile().get(j).getNum());
+			}
+			System.out.println();
+		}
 	}
 
 	public void updateLogger(Logger logger) {
@@ -185,5 +205,44 @@ public class GameManager {
 
 	public void updatePlayerEnter(Player player) {
 		// 플레이어가 접속했다는 정보를 업데이트한다.
+	}
+
+	void sortTile() {
+		// 플레이어들의 타일을 순서대로 정렬한다.
+		// 두 번째 인자로 Comparator 객체를 익명객체로 만들어서 넘깁니다.
+		for (int i = 0; i < player.size(); i++) {
+			ArrayList<Tile> tiles = player.get(i).getTile();
+
+			for (int j = 0; j < tiles.size(); j++) {
+				for (int k = 0; k < tiles.size() - 1 - j; k++) {
+					if (tiles.get(k).getNum() > tiles.get(k + 1).getNum()) {
+						Tile tmp = new Tile(tiles.get(k));
+
+						tiles.get(k).setColor(tiles.get(k + 1).getColor());
+						tiles.get(k).setNum(tiles.get(k + 1).getNum());
+						tiles.get(k).setOpen(tiles.get(k + 1).isOpen());
+
+						tiles.get(k + 1).setColor(tmp.getColor());
+						tiles.get(k + 1).setNum(tmp.getNum());
+						tiles.get(k + 1).setOpen(tmp.isOpen());
+					} else if (tiles.get(k).getNum() == tiles.get(k + 1).getNum()) {
+						if (tiles.get(k).getColor() == "white") {
+							// 같으면 숫자면 검정색이 더 작은 값이다
+							Tile tmp = new Tile(tiles.get(k));
+
+							tiles.get(k).setColor(tiles.get(k + 1).getColor());
+							tiles.get(k).setNum(tiles.get(k + 1).getNum());
+							tiles.get(k).setOpen(tiles.get(k + 1).isOpen());
+
+							tiles.get(k + 1).setColor(tmp.getColor());
+							tiles.get(k + 1).setNum(tmp.getNum());
+							tiles.get(k + 1).setOpen(tmp.isOpen());
+						}
+
+					}
+				}
+			}
+		}
+
 	}
 }
