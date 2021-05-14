@@ -9,7 +9,7 @@ import org.json.simple.JSONObject;
 
 public class GameManager {
 	Socket socket; // 서버에게 데이터를 보낼 때 사용하는 소켓
-	int Room_id; // 각 방을 구분하기 위한 고유의 값
+	int room_id; // 각 방을 구분하기 위한 고유의 값
 	int id; // 나의 고유 id
 	int limit; // 내가 선택한 게임의 인원 수 2명, 3명, 4명
 	Player me; // 나에 대한 게임 정보(가지고 있는 타일, 내 턴인지, 생존여부)
@@ -31,11 +31,11 @@ public class GameManager {
 	}
 
 	public int getRoom_id() {
-		return Room_id;
+		return room_id;
 	}
 
 	public void setRoom_id(int room_id) {
-		Room_id = room_id;
+		this.room_id = room_id;
 	}
 
 	public int getId() {
@@ -103,15 +103,55 @@ public class GameManager {
 		int remainTileBlackNum = 0;
 		int remainTileWhiteNum = 0;
 		for (int i = 0; i < remainTile.size(); i++) {
-			if (remainTile.get(i).getColor() == "black") {
+			if (remainTile.get(i).getColor().equals("black")) {
 				remainTileBlackNum++;
-			} else if (remainTile.get(i).getColor() == "white") {
+			} else if (remainTile.get(i).getColor().equals("white")) {
 				remainTileWhiteNum++;
 			}
 		}
 		System.out.println("■:" + remainTileBlackNum + ", □:" + remainTileWhiteNum);
 		System.out.println("");
-		System.out.println("■:" + remainTileBlackNum + ", □:" + remainTileWhiteNum);
+		for (int i = 0; i < player.size(); i++) {
+			if (player.get(i).getId() == id) {
+				continue;
+			}
+			ArrayList<Tile> tiles = player.get(i).getTile();
+			System.out.printf("Player " + player.get(i).getId() + ":");
+			for (int j = 0; j < tiles.size(); j++) {
+				String colorPrint = "";
+				if (tiles.get(j).getColor().equals("black")) {
+					colorPrint = "■";
+				} else if (tiles.get(j).getColor().equals("white")) {
+					colorPrint = "□";
+				}
+
+				String numPrint = "";
+				if (tiles.get(j).isOpen() == true) {
+					numPrint = tiles.get(j).getNum() + "";
+				} else if (tiles.get(j).isOpen() == false) {
+					numPrint = "?";
+				}
+
+				System.out.printf(" " + colorPrint + numPrint);
+			}
+			System.out.println();
+		}
+		
+		System.out.println();
+
+		ArrayList<Tile> tiles = me.getTile();
+		System.out.printf("my id("+id+") :");
+		for (int j = 0; j < tiles.size(); j++) {
+			String colorPrint = "";
+			if (tiles.get(j).getColor().equals("black")) {
+				colorPrint = "■";
+			} else if (tiles.get(j).getColor().equals("white")) {
+				colorPrint = "□";
+			}
+
+			System.out.printf(" " + colorPrint + tiles.get(j).getNum());
+		}
+		
 	}
 
 	public void Guess() {
@@ -151,7 +191,7 @@ public class GameManager {
 				t_tile.add(new Tile(t_color, t_num, t_isOpen));
 			}
 
-			// 내정보면 me에도 채우기
+			// 내 정보면 me에도 채우기
 			if (t_id == id) {
 				me = new Player(t_id, t_tile, t_isAlive, false);
 			}
@@ -184,15 +224,18 @@ public class GameManager {
 			logger.addLog(t_text);
 
 		}
+		
+		room_id = ((Long) jo.get("room_id")).intValue();
 
 		sortTile();
+		showGameInfo();
 
-		for (int i = 0; i < player.size(); i++) {
-			for (int j = 0; j < player.get(i).getTile().size(); j++) {
-				System.out.println(player.get(i).getTile().get(j).getNum());
-			}
-			System.out.println();
-		}
+//		for (int i = 0; i < player.size(); i++) {
+//			for (int j = 0; j < player.get(i).getTile().size(); j++) {
+//				System.out.println(player.get(i).getTile().get(j).getNum());
+//			}
+//			System.out.println();
+//		}
 	}
 
 	public void updateLogger(Logger logger) {
@@ -240,6 +283,38 @@ public class GameManager {
 						}
 
 					}
+				}
+			}
+		}
+
+		// me에 들어 있는 tile 정보도 정렬
+		ArrayList<Tile> tiles = me.getTile();
+		for (int j = 0; j < tiles.size(); j++) {
+			for (int k = 0; k < tiles.size() - 1 - j; k++) {
+				if (tiles.get(k).getNum() > tiles.get(k + 1).getNum()) {
+					Tile tmp = new Tile(tiles.get(k));
+
+					tiles.get(k).setColor(tiles.get(k + 1).getColor());
+					tiles.get(k).setNum(tiles.get(k + 1).getNum());
+					tiles.get(k).setOpen(tiles.get(k + 1).isOpen());
+
+					tiles.get(k + 1).setColor(tmp.getColor());
+					tiles.get(k + 1).setNum(tmp.getNum());
+					tiles.get(k + 1).setOpen(tmp.isOpen());
+				} else if (tiles.get(k).getNum() == tiles.get(k + 1).getNum()) {
+					if (tiles.get(k).getColor() == "white") {
+						// 같으면 숫자면 검정색이 더 작은 값이다
+						Tile tmp = new Tile(tiles.get(k));
+
+						tiles.get(k).setColor(tiles.get(k + 1).getColor());
+						tiles.get(k).setNum(tiles.get(k + 1).getNum());
+						tiles.get(k).setOpen(tiles.get(k + 1).isOpen());
+
+						tiles.get(k + 1).setColor(tmp.getColor());
+						tiles.get(k + 1).setNum(tmp.getNum());
+						tiles.get(k + 1).setOpen(tmp.isOpen());
+					}
+
 				}
 			}
 		}

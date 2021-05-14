@@ -1,6 +1,7 @@
 package da_vinci_code.serverside;
 
 import java.io.BufferedOutputStream;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
@@ -152,9 +153,13 @@ public class GameManager {
 	void startGame() {
 		// 게임을 시작한다.
 		// 현재 턴인 플레이어에게 바닥에 있는 랜덤한 블록을 준다.
+		startTurn();
+	}
+	
+	void startTurn() {
+		// 현재 턴을 가진 플레이어가 턴을 시작한다.
 		addTileToPlayerFromRemainTile(nowTurnPlayerId);
 		sendGameInfo();
-
 	}
 
 	int getNextPlayerId() {
@@ -302,6 +307,9 @@ public class GameManager {
 				ltjo.put("num", lastTile.getNum());
 				ltjo.put("isOpen", lastTile.isOpen());
 				jsonObj.put("lastTile", ltjo);
+				
+				jsonObj.put("room_id", room_id);
+				
 
 				String json = jsonObj.toJSONString();
 
@@ -312,5 +320,16 @@ public class GameManager {
 			}
 		}
 
+	}
+
+	void sendID(int id, Socket socket, int roomNum) throws IOException {
+		OutputStreamWriter writer = getWriter(socket);
+		JSONObject jo = new JSONObject();
+		jo.put("title", "SEND_ID");
+		jo.put("id", id);
+		jo.put("room_id", roomNum);
+		String json = jo.toJSONString();
+		writer.write(json);
+		writer.flush();
 	}
 }

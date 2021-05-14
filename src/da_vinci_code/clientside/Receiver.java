@@ -7,6 +7,7 @@ import java.net.Socket;
 
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 public class Receiver extends Thread {
 	private Socket socket = null;
@@ -29,6 +30,7 @@ public class Receiver extends Thread {
 			String msg = new String(arr).replace('\0', ' ');
 			System.out.println("[서버로 부터 받은 msg] " + msg);
 			arr = new char[10000];
+
 			return msg;
 
 		} catch (Exception e) {
@@ -39,23 +41,53 @@ public class Receiver extends Thread {
 
 	@Override
 	public void run() {
-		JSONParser parser = new JSONParser();
-		JSONObject jsonObj;
 		while (true) {
 			try {
-				jsonObj = (JSONObject) parser.parse(getMsg());
-				String title = (String) jsonObj.get("title");
-				System.out.println(title);
-				switch (title) {
-				case "GAME_INFO":
-					gameManager.updateGameInfo(jsonObj);
-					break;
+				String msg = getMsg();
+
+				while (true) {
+					// 여러 InputStream이 한번에 들어왔을 때 컨트롤
+					int indexofNum = msg.indexOf("}{");
+					if (indexofNum != -1) {
+						msg = msg.substring(0, indexofNum + 1);
+						System.out.println("[서버로 부터 받은 msg] " + msg);
+						process(msg);
+						msg = msg.substring(indexofNum + 1);
+					} else {
+						process(msg);
+						break;
+					}
 				}
+
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
+	}
+
+	public void process(String msg) throws ParseException {
+
+		JSONParser parser = new JSONParser();
+		JSONObject jsonObj;
+
+		// 결과 처리
+		jsonObj = (JSONObject) parser.parse(msg);
+		String title = (String) jsonObj.get("title");
+		System.out.println(title);
+		switch (title) {
+		case "GAME_INFO":
+			gameManager.updateGameInfo(jsonObj);
+			break;
+		case "SEND_ID":
+			int id = ((Long) jsonObj.get("id")).intValue();
+			gameManager.setId(id);
+			int room_id = ((Long) jsonObj.get("room_id")).intValue();
+			gameManager.setRoom_id(room_id);
+			System.out.println("id: " + id + ", room_id: " + room_id + "에 배정되었습니다.");
+			break;
+		}
+
 	}
 
 }
