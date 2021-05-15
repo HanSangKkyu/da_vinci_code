@@ -89,20 +89,6 @@ public class GameManager {
 		this.lastTile = lastTile;
 	}
 
-	public static OutputStreamWriter getWriter(Socket socket) {
-		// 서버에게 메세지를 보낼 때 사용하는 wirter를 얻는
-		OutputStreamWriter writer = null;
-		try {
-			OutputStream os = socket.getOutputStream();
-			BufferedOutputStream bos = new BufferedOutputStream(os);
-			writer = new OutputStreamWriter(bos, "UTF-8");
-		} catch (Exception e) {
-			System.out.println(e.toString());
-		}
-
-		return writer;
-	}
-
 	public static void send(Socket socket, JSONObject jsonObj) {
 		// 서버에게 메세지를 보낼 때 사용하는 wirter를 얻는
 		OutputStreamWriter writer = null;
@@ -422,11 +408,7 @@ public class GameManager {
 				jsonObj.put("room_id", room_id);
 
 				send(player.get(t).getSocket(), jsonObj);
-//
-//				String json = jsonObj.toJSONString();
-//
-//				writer.write(json);
-//				writer.flush();
+
 			} catch (Exception e) {
 				System.out.println(e.toString());
 			}
