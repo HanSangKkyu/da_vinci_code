@@ -227,10 +227,16 @@ public class GameManager {
 			System.out.println(id + " " + target_id + " 못 맞춤");
 			// 방금 뽑은 타일을 보여준다.
 			for (int i = 0; i < player.get(idToIndex(id)).getTile().size(); i++) {
-				if (player.get(idToIndex(id)).getTile().get(i).getNum() == lastTile.getNum()
-						&& player.get(idToIndex(id)).getTile().get(i).getColor() == lastTile.getColor()) {
-					openTileFromPlayer(id, i);
-					break;
+				if (!remainTile.isEmpty()) {
+					if (player.get(idToIndex(id)).getTile().get(i).getNum() == lastTile.getNum()
+							&& player.get(idToIndex(id)).getTile().get(i).getColor() == lastTile.getColor()) {
+						openTileFromPlayer(id, i);
+						break;
+					}
+				} 
+				else {
+					int randNum = (int) (Math.random() * player.get(idToIndex(id)).getTile().size());
+					openTileFromPlayer(id, (int)(Math.random() * randNum));
 				}
 			}
 
@@ -283,14 +289,16 @@ public class GameManager {
 	}
 
 	void addTileToPlayerFromRemainTile(int id) {
-		int randNum = (int) (Math.random() * remainTile.size());
-		Tile tmpTile = new Tile(remainTile.get(randNum));
+		if(!remainTile.isEmpty()) {
+			int randNum = (int) (Math.random() * remainTile.size());
+			Tile tmpTile = new Tile(remainTile.get(randNum));
 
-		player.get(idToIndex(id)).getTile().add(tmpTile);
+			player.get(idToIndex(id)).getTile().add(tmpTile);
 
-		lastTile = new Tile(tmpTile);
+			lastTile = new Tile(tmpTile);
 
-		remainTile.remove(randNum);
+			remainTile.remove(randNum);
+		}
 	}
 
 	int idToIndex(int id) {
