@@ -95,7 +95,6 @@ public class Client {
 				Wait();
 				break;
 			}
-
 		}
 	}
 

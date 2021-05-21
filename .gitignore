@@ -1,2 +1,4 @@
 /bin/
 src/da_vinci_code/clientside/.DS_Store
+.classpath
+.project
