@@ -89,13 +89,16 @@ public class Receiver extends Thread {
 			int id1 = ((Long) jsonObj.get("id")).intValue();
 			gameManager.Guess();
 			break;
-		case "CONTINUE": // 타일을 맞추고 계속 맞출지 물어본다.
+		case "CONTINUE": // 타일을 맞추고 계속 맞출지 물어본다.;
 			gameManager.continueOrStop();
 			break;
 		case "GAME_END": // 타일을 맞추고 계속 맞출지 물어본다.
 			int winner_id = ((Long) jsonObj.get("winner_id")).intValue();
 			gameManager.gameEnd(winner_id);
 			break;
+		case "LOGGER": // 로그 출력하기 
+			String s = (String) jsonObj.get("logger");
+			System.out.println(s);
 		}
 
 	}

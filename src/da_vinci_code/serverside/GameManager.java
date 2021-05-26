@@ -182,8 +182,19 @@ public class GameManager {
 		return nowTurnPlayerId;
 	}
 
-	void sendLog() {
-
+	void sendLog(String s) { 
+		//입력받은 로그를 모든 플레이어에게 전송한다.
+		for (int i = 0; i < player.size(); i++) {
+			try {
+				JSONObject jsonObj = new JSONObject();
+				jsonObj.put("title", "LOGGER");
+				jsonObj.put("logger", s);
+				send(player.get(i).getSocket(),jsonObj);
+			}
+			 catch (Exception e) {
+					System.out.println(e.toString());
+			}
+		}
 	}
 
 	void checkGuessingTile(int room_id, int id, int target_id, int tileorder, int guessNum) throws IOException {
@@ -195,7 +206,7 @@ public class GameManager {
 			System.out.println(id + " " + target_id + " 맞춤");
 			// isOpen을 true로 바꾼다.
 			openTileFromPlayer(target_id, tileorder);
-
+			
 			if (isGameEnd()) {
 				// 한명의 플레이어를 제외한 나머지 플레이어의 타일이 모두 뒤집혔는지 판단한다.
 				System.out.println("게임 끝");
@@ -220,11 +231,16 @@ public class GameManager {
 				// 계속 시도할지 물어본다.
 				JSONObject jo = new JSONObject();
 				jo.put("title", "CONTINUE");
+				
+				//지목당한 플레이어의 x번째 타일을 맞췄다는 로그 출력
+				String logger = target_id+" 플레이어의 "+tileorder+"번째 타일의 번호는 "+guessNum+"입니다.";
+				sendLog(logger);
+				
 				send(player.get(idToIndex(id)).getSocket(), jo);
 			}
 
 		} else {
-			System.out.println(id + " " + target_id + " 못 맞춤");
+			
 			// 방금 뽑은 타일을 보여준다.
 			for (int i = 0; i < player.get(idToIndex(id)).getTile().size(); i++) {
 				if (!remainTile.isEmpty()) {
@@ -239,7 +255,12 @@ public class GameManager {
 					openTileFromPlayer(id, (int)(Math.random() * randNum));
 				}
 			}
-
+			
+			// 틀렸다고 로그 출력.
+			String log = id + " 플레이어기" + " " + target_id + " 플레이어의 타일을" + " 맞추지 못했습니다.";
+			System.out.println(log);
+			sendLog(log);
+			
 			// 다음 턴으로 넘어간다.
 			getNextPlayerId();
 			startTurn();
@@ -446,14 +467,23 @@ public class GameManager {
 		System.out.println("isContinue " + isContinue);
 		// 플레이어가 계속 맞추겠다고 했는지 다음 턴으로 넘기겠다고 했는지 받아온다.
 		if (isContinue == true) {
-			System.out.println(id + "가 계속한다고 함 ");
+			//현재 차례 로그 출력
+			String log = id + " 플레이어가 계속 진행합니다. ";
+			System.out.println(log);
+			sendLog(log);
+			
 			sendGameInfo();
 			requestGuess(id);
 		} else {
-			System.out.println(id + "가 다음 차례로 넘김 ");
+			//다음 차례 로그 출력
+			String log = id + " 플레이어가 다음 플레이어에게 차례를 넘깁니다. ";
+			System.out.println(log);
+			sendLog(log);
+			
 			// 다음 차례로 넘기기
 			getNextPlayerId();
-			System.out.println("다음 차례는 " + nowTurnPlayerId);
+			log = "다음 차례는 " + nowTurnPlayerId + " 플레이어입니다.";
+			sendLog(log);
 			startTurn();
 		}
 	}
