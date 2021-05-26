@@ -61,6 +61,8 @@ public class Client {
 				break;
 			} else if (select == 2) {
 				break;
+			} else {
+				System.out.println("1 또는 2를 입력해주세요.");
 			}
 
 		}
@@ -94,6 +96,9 @@ public class Client {
 
 				Wait();
 				break;
+			}
+			else {
+				System.out.println("2 ~ 4 사이 값을 입력해주세요.");
 			}
 		}
 	}
