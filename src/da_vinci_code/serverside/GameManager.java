@@ -188,7 +188,7 @@ public class GameManager {
 			try {
 				JSONObject jsonObj = new JSONObject();
 				jsonObj.put("title", "LOGGER");
-				jsonObj.put("logger", s);
+				jsonObj.put("log", s);
 				send(player.get(i).getSocket(),jsonObj);
 			}
 			 catch (Exception e) {
@@ -209,8 +209,10 @@ public class GameManager {
 			
 			if (isGameEnd()) {
 				// 한명의 플레이어를 제외한 나머지 플레이어의 타일이 모두 뒤집혔는지 판단한다.
-				System.out.println("게임 끝");
-
+				String log = "게임이 끝났습니다.";
+				System.out.println(log);
+				
+				
 				// 우승자의 id를 찾는다.
 				int winner_id = 0;
 				for (int i = 0; i < player.size(); i++) {
@@ -233,8 +235,8 @@ public class GameManager {
 				jo.put("title", "CONTINUE");
 				
 				//지목당한 플레이어의 x번째 타일을 맞췄다는 로그 출력
-				String logger = target_id+" 플레이어의 "+tileorder+"번째 타일의 번호는 "+guessNum+"입니다.";
-				sendLog(logger);
+				String log = target_id+" 플레이어의 "+tileorder+"번째 타일의 번호는 "+guessNum+"입니다.";
+				sendLog(log);
 				
 				send(player.get(idToIndex(id)).getSocket(), jo);
 			}
@@ -417,7 +419,7 @@ public class GameManager {
 					rtjo.put("color", remainTile.get(i).getColor());
 					rtjo.put("num", remainTile.get(i).getNum());
 					rtjo.put("isOpen", remainTile.get(i).isOpen());
-
+					
 					rtja.add(rtjo);
 				}
 				jsonObj.put("remainTile", rtja);
@@ -480,7 +482,7 @@ public class GameManager {
 			System.out.println(log);
 			sendLog(log);
 			
-			// 다음 차례로 넘기기
+			// 다음 차례로 넘기기 + 로그 출력
 			getNextPlayerId();
 			log = "다음 차례는 " + nowTurnPlayerId + " 플레이어입니다.";
 			sendLog(log);
