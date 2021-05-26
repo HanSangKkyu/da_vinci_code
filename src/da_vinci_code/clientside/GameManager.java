@@ -178,30 +178,88 @@ public class GameManager {
 
 	}
 
-	public void Guess() {
+		public void Guess() {
 		// 어떤 플레이어의 어떤 타일을 맞출 건지 물어본다.
 		// 서버에게 맞출 타일 정보를 보낸다.
 		Scanner scan = new Scanner(System.in);
 		int target_id; // 타겟 플레이어 ID
 		int tileorder; // 왼쪽부터 몇번째 타일을 맞출 것인지
 		int guessNum; // 맞출 타일에 적힌 번호
-		System.out.println("<다른 플레이어의 타일 맞추기>");
-		System.out.printf("플레이어ID: ");
-		target_id = Integer.parseInt(scan.nextLine());
-		System.out.printf("몇번째 타일을 맞추겠습니까? (왼쪽부터 0,1,2,..) : ");
-		tileorder = Integer.parseInt(scan.nextLine());
-		System.out.printf("그 타일은 몇입니까? : ");
-		guessNum = Integer.parseInt(scan.nextLine());
-
-		JSONObject jo = new JSONObject();
-		jo.put("title", "GUESS");
-		jo.put("room_id", room_id);
-		jo.put("id", id);
-		jo.put("target_id", target_id);
-		jo.put("tileorder", tileorder);
-		jo.put("guessNum", guessNum);
-
-		send(socket, jo);
+		int count = 0;
+		int tilesize = 0;
+		int[] surviveplayer = {0, 0, 0, 0}; // 최대 플레이어 4명
+		
+		
+		for (int i = 0; i < player.size(); i++) {
+			tilesize = 0;
+			if (player.get(i).getId() == id) { // 있는 플레이어인지 체크
+				continue;
+			}
+			
+			//다 오픈된 플레이어 인지 체크
+			ArrayList<Tile> tiles = player.get(i).getTile();
+			for (int j = 0; j < tiles.size(); j++) {
+				if (tiles.get(j).isOpen() == true) {
+					tilesize += 1;
+				} 
+			}
+			if (tilesize == tiles.size()) {
+				continue;
+			}
+			// --------------------
+			surviveplayer[count] = i+1; // 살아남은 플레이어 확인
+			count += 1;
+		}
+		
+		while (true) {
+			int check = 0;
+			System.out.println("<다른 플레이어의 타일 맞추기>");
+			System.out.printf("플레이어ID: ");
+			target_id = Integer.parseInt(scan.nextLine());
+			if(target_id < 1 || target_id > 4 ) { // 없는 플레이어를 입력했을 경우
+				System.out.println("올바른 플레이어를 입력하십시오.");
+				continue;
+			}
+			for (int i = 0; i < surviveplayer.length; i++) {
+				if(target_id == surviveplayer[i]) {
+					check = 1;
+				}
+			}
+			if (check != 1) {
+				System.out.println("타일이 다 뒤집혀진 플레이어이거나 없는 플레이어입니다.");
+				continue;
+			}
+			
+			ArrayList<Tile> tiles = player.get(target_id-1).getTile();
+			System.out.printf("몇번째 타일을 맞추겠습니까? (왼쪽부터 0,1,2,..) : ");
+			tileorder = Integer.parseInt(scan.nextLine());
+			if(tileorder < 0 || tileorder >= tiles.size()) { // 없는 타일을 입력했을 경우
+				System.out.println("올바른 타일 위치를 입력하십시오.");
+				continue;
+			}
+			if (tiles.get(tileorder).isOpen() == true) {
+				System.out.println("이미 알려진 타일입니다. 다시고르시오.");
+				continue;
+			}
+			
+			System.out.printf("그 타일은 몇입니까? : ");
+			guessNum = Integer.parseInt(scan.nextLine());
+			if(guessNum < 0 || guessNum > 11) { // 벗어나는 값을 입력했을 경우
+				System.out.println("올바른 타일 숫자를 입력하십시오.");
+				continue;
+			}
+	
+			JSONObject jo = new JSONObject();
+			jo.put("title", "GUESS");
+			jo.put("room_id", room_id);
+			jo.put("id", id);
+			jo.put("target_id", target_id);
+			jo.put("tileorder", tileorder);
+			jo.put("guessNum", guessNum);
+	
+			send(socket, jo);
+			break;
+		}
 	}
 
 	public void continueOrStop() {
@@ -211,15 +269,24 @@ public class GameManager {
 		jo.put("room_id", room_id);
 		jo.put("id", id);
 
-		System.out.printf("1. 계속 타일을 맞춘다 2.차례를 넘긴다: ");
-		Scanner scan = new Scanner(System.in);
-		int sel = Integer.parseInt(scan.nextLine());
-		if (sel == 1) {
-			jo.put("isContinue", true);
-		} else if (sel == 2) {
-			jo.put("isContinue", false);
+		while (true) {
+			System.out.printf("1. 계속 타일을 맞춘다 2.차례를 넘긴다: ");
+			Scanner scan = new Scanner(System.in);
+			int sel = Integer.parseInt(scan.nextLine());
+			if (sel == 1) {
+				jo.put("isContinue", true);
+			} else if (sel == 2) {
+				jo.put("isContinue", false);
+			}
+			
+			if (sel == 1 || sel == 2) {
+				send(socket, jo);
+				break;
+			}
+			else {
+				System.out.println("1 또는 2를 입력해 주세요.");
+			}
 		}
-		send(socket, jo);
 
 	}
 
