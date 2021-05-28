@@ -98,7 +98,7 @@ public class GameManager {
 	}
 
 	public static void send(Socket socket, JSONObject jsonObj) {
-		// 서버에게 메세지를 보낼 때 사용하는 wirter를 얻는
+		// 서버에게 메세지를 보낸다.
 		OutputStreamWriter writer = null;
 		try {
 			OutputStream os = socket.getOutputStream();
@@ -113,10 +113,6 @@ public class GameManager {
 		}
 
 		return;
-	}
-
-	public void showLog() {
-		// 플레이어들이 한 행동에 대해 보여준다.
 	}
 
 	public void showGameInfo() {
@@ -178,7 +174,7 @@ public class GameManager {
 
 	}
 
-		public void Guess() {
+	public void Guess() {
 		// 어떤 플레이어의 어떤 타일을 맞출 건지 물어본다.
 		// 서버에게 맞출 타일 정보를 보낸다.
 		Scanner scan = new Scanner(System.in);
@@ -298,7 +294,7 @@ public class GameManager {
 		// 서버에 요청을 보내서 클라이언트 사이드에서 가지고 있는 GameManager의 필드값을 서버와 동기화 한다.
 		String title = (String) jo.get("title");
 
-		int nowTurnPlayerId = ((Long) jo.get("nowTurnPlayerId")).intValue();
+		this.nowTurnPlayerId = ((Long) jo.get("nowTurnPlayerId")).intValue();
 
 		player = new ArrayList<Player>();
 		JSONArray pja = (JSONArray) jo.get("player");
@@ -360,21 +356,12 @@ public class GameManager {
 
 	}
 
-	public void updateLogger(Logger logger) {
-		// 로그를 업데이트 한다.
-	}
-
-	public void updateMyInfo(Player me) {
-		// 나의 정보를 업데이트 한다.
-	}
-
 	public void updatePlayerEnter(Player player) {
 		// 플레이어가 접속했다는 정보를 업데이트한다.
 	}
 
 	void sortTile() {
 		// 플레이어들의 타일을 순서대로 정렬한다.
-		// 두 번째 인자로 Comparator 객체를 익명객체로 만들어서 넘깁니다.
 		for (int i = 0; i < player.size(); i++) {
 			ArrayList<Tile> tiles = player.get(i).getTile();
 
@@ -444,6 +431,7 @@ public class GameManager {
 	}
 
 	void gameEnd(int winner_id) {
+		// 승자를 출력한다.
 		System.out.println("게임 끝");
 		System.out.println("우승자: plyaer " + winner_id);
 	}

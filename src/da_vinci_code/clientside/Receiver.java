@@ -65,6 +65,7 @@ public class Receiver extends Thread {
 	}
 
 	public void process(String msg) throws ParseException {
+		// 서버로부터 받은 메시지의 TITLE에 따라 작업을 수행한다.
 		System.out.println("[인식된 msg] \n" + msg);
 
 		JSONParser parser = new JSONParser();

@@ -84,6 +84,7 @@ class Receiver extends Thread {
 	}
 
 	public void matchPlayer(int limit) throws IOException {
+		// 클라이언트를 조건에 맞는 방에 할당한다.
 		boolean flag = false;
 		for (int i = 0; i < server.gameManager.size(); i++) {
 			if (limit == server.gameManager.get(i).getLimit() && server.gameManager.get(i).getPlayer().size() < limit) {
@@ -91,13 +92,8 @@ class Receiver extends Thread {
 				server.gameManager.get(i).addPlayer(++server.nextPlayerID, socket);
 				flag = true;
 
-				System.out.println(socket + "이 " + server.nextPlayerID + "를 부여받고 "
-						+ server.gameManager.get(i).getRoom_id() + "방에 배정 됨 ");
-				server.gameManager.get(i).sendID(server.nextPlayerID, socket, server.gameManager.get(i).getRoom_id()); // 방
-																														// 배정
-																														// 결과를
-																														// 클라이언트에게
-																														// 알린다.
+				System.out.println(socket + "이 " + server.nextPlayerID + "를 부여받고 " + server.gameManager.get(i).getRoom_id() + "방에 배정 됨 ");
+				server.gameManager.get(i).sendID(server.nextPlayerID, socket, server.gameManager.get(i).getRoom_id()); // 방 배정 결과를 클라이언트에게 알린다.
 
 				// 방에 모든 플레이어들이 들어왔는지 확인
 				server.gameManager.get(i).checkRoomPlayerNum();

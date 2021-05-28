@@ -22,7 +22,7 @@ public class Client {
 	}
 
 	public static OutputStreamWriter getWriter() {
-		// 서버에게 메세지를 보낼 때 사용하는 wirter를 얻는
+		// 서버에게 메세지를 보낼 때 사용하는 wirter를 얻는다.
 		OutputStreamWriter writer = null;
 		try {
 			OutputStream os = socket.getOutputStream();

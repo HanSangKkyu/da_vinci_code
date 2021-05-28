@@ -90,7 +90,7 @@ public class GameManager {
 	}
 
 	public static void send(Socket socket, JSONObject jsonObj) {
-		// 서버에게 메세지를 보낼 때 사용하는 wirter를 얻는
+		// 클라이언트에게 메세지를 보낸다.
 		OutputStreamWriter writer = null;
 		try {
 			OutputStream os = socket.getOutputStream();
@@ -178,7 +178,7 @@ public class GameManager {
 				break;
 			}
 		}
-
+		
 		return nowTurnPlayerId;
 	}
 
@@ -325,6 +325,7 @@ public class GameManager {
 	}
 
 	int idToIndex(int id) {
+		// 플레이어 id를 인덱스로 바꿔준다.
 		for (int i = 0; i < player.size(); i++) {
 			if (player.get(i).getId() == id) {
 				return i;

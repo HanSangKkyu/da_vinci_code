@@ -7,7 +7,7 @@ public class Player {
 	int id; // 로그인시 부여 받는 고유의 값 
 	ArrayList<Tile> tile; // 플레이어가 보유한 타일 정보 
 	boolean isAlive; // 해당 플레이어가 살아있는지
-	Socket socket;
+	Socket socket; // 해당 플레이어의 소켓 정보를 저장한다.
 	
 	public Player(){
 		super();
