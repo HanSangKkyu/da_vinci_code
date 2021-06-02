@@ -287,6 +287,28 @@ public class GameManager {
 	}
 
 	public void exitOrStay() {
+		JSONObject jo = new JSONObject();
+		jo.put("title", "EXIT");
+		jo.put("room_id", room_id);
+		jo.put("id", id);
+		
+		while (true) {
+			Scanner scan = new Scanner(System.in);
+			System.out.println("1) 방에 남아있는다.");
+			System.out.println("2) 메인으로 간다.");
+			int sel = Integer.parseInt(scan.nextLine());
+			if (sel == 1) {
+				jo.put("isExit", false);
+				send(socket, jo);
+			}
+			else if(sel == 2) {
+				jo.put("isExit", true);
+				send(socket, jo);
+			}
+			else {
+				System.out.println("1 또는 2를 입력해 주세요.");
+			}
+		}
 		// 타일이 모두 공개되었을 때 방에 남아있을지 메인으로 갈지 정한다.
 	}
 

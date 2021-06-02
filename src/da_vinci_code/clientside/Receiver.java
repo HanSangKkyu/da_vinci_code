@@ -93,6 +93,9 @@ public class Receiver extends Thread {
 		case "CONTINUE": // 타일을 맞추고 계속 맞출지 물어본다.
 			gameManager.continueOrStop();
 			break;
+		case "EXIT":
+			gameManager.exitOrStay();
+			break;
 		case "GAME_END": // 타일을 모두 맞춘 우승자가 나왔을 경우.
 			int winner_id = ((Long) jsonObj.get("winner_id")).intValue();
 			gameManager.gameEnd(winner_id);

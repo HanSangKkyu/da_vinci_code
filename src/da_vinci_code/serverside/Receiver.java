@@ -74,6 +74,15 @@ class Receiver extends Thread {
 					boolean isContinue = (boolean) jsonObj.get("isContinue");
 					server.gameManager.get(roomIDToIdx(room_id1)).continueOrStop(id1, isContinue);
 					break;
+				case "EXIT":
+					//나갈지 말
+					int room_id2 = ((Long) jsonObj.get("rood_id")).intValue();
+					int id2 = ((Long) jsonObj.get("id")).intValue();
+					boolean isExit = (boolean) jsonObj.get("isExit");
+					server.gameManager.get(roomIDToIdx(room_id2)).exitOrStay(id2, isExit);
+					break;
+					
+					
 				}
 			} catch (Exception e) {
 				// TODO Auto-generated catch block

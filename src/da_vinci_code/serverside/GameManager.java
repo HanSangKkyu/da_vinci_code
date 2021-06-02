@@ -292,6 +292,13 @@ public class GameManager {
 			if (cntOpen == player.get(i).getTile().size()) {
 				// 모든 타일이 뒤집혔다면 isAlive를 false로 둔다.
 				player.get(i).setAlive(false);
+				
+				JSONObject jo = new JSONObject();
+				jo.put("title", "CONTINUE");
+				send(player.get(i).getSocket(), jo);
+				
+				
+				
 			}
 		}
 
@@ -486,6 +493,21 @@ public class GameManager {
 			// 다음 차례로 넘기기 + 로그 출력
 			getNextPlayerId();
 			log = "다음 차례는 " + nowTurnPlayerId + " 플레이어입니다.";
+			sendLog(log);
+			startTurn();
+		}
+	}
+	
+	void exitOrStay(int id, boolean isExit) throws IOException{
+		if (isExit == true) {
+			String log = id + "플레이어가 퇴장하였습니다.";
+			System.out.println(log);
+			sendLog(log);
+			
+			removePlayer();
+		}
+		else {
+			String log = id + " 플레이어가 관전합니다.";
 			sendLog(log);
 			startTurn();
 		}
