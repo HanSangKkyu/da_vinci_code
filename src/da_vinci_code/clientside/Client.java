@@ -14,11 +14,11 @@ import org.json.simple.parser.*;
 public class Client {
 	static GameManager gameManager;
 	static Socket socket;
+	static boolean isExit;
 
 	public static void main(String[] args) {
-
-		Main();
-
+		
+		Main();	
 	}
 
 	public static OutputStreamWriter getWriter() {

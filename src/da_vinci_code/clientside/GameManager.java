@@ -1,6 +1,7 @@
 package da_vinci_code.clientside;
 
 import java.io.BufferedOutputStream;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
@@ -9,6 +10,8 @@ import java.util.Scanner;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+
+import static da_vinci_code.clientside.Client.Main;
 
 public class GameManager {
 	Socket socket; // 서버에게 데이터를 보낼 때 사용하는 소켓
@@ -287,6 +290,7 @@ public class GameManager {
 	}
 
 	public void exitOrStay() {
+		// 타일이 모두 공개되었을 때 방에 남아있을지 메인으로 갈지 정한다.
 		JSONObject jo = new JSONObject();
 		jo.put("title", "EXIT");
 		jo.put("room_id", room_id);
@@ -294,22 +298,30 @@ public class GameManager {
 		
 		while (true) {
 			Scanner scan = new Scanner(System.in);
-			System.out.println("1) 방에 남아있는다.");
-			System.out.println("2) 메인으로 간다.");
+			System.out.println("모든 타일이 뒤집히셨습니다.");
+			System.out.println("1) 방에 남아있는다. 2) 메인으로 간다.");
 			int sel = Integer.parseInt(scan.nextLine());
 			if (sel == 1) {
 				jo.put("isExit", false);
 				send(socket, jo);
+				break;
 			}
 			else if(sel == 2) {
 				jo.put("isExit", true);
 				send(socket, jo);
+				try {
+					socket.close();
+					Main();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				break;
 			}
 			else {
 				System.out.println("1 또는 2를 입력해 주세요.");
 			}
 		}
-		// 타일이 모두 공개되었을 때 방에 남아있을지 메인으로 갈지 정한다.
 	}
 
 	public void updateGameInfo(JSONObject jo) {
@@ -456,5 +468,14 @@ public class GameManager {
 		// 승자를 출력한다.
 		System.out.println("게임 끝");
 		System.out.println("우승자: plyaer " + winner_id);
+
+		try {
+			socket.close();
+			Main();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 	}
 }

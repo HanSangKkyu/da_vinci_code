@@ -112,7 +112,7 @@ public class GameManager {
 
 		// 첫 차례 지정
 		this.nowTurnPlayerId = player.get(0).getId(); // Player.id
-		System.out.println("first player is " + this.nowTurnPlayerId);
+		// System.out.println("first player is " + this.nowTurnPlayerId);
 
 		// 바닥에 남은 타일 초기
 		for (int i = 0; i < 12; i++) {
@@ -199,11 +199,10 @@ public class GameManager {
 
 	void checkGuessingTile(int room_id, int id, int target_id, int tileorder, int guessNum) throws IOException {
 		sortTile();
-		System.out.println(
-				player.get(idToIndex(target_id)).getTile().get(tileorder).getNum() + " " + guessNum + " " + tileorder);
+		// System.out.println(player.get(idToIndex(target_id)).getTile().get(tileorder).getNum() + " " + guessNum + " " + tileorder);
 		// 플레이어의 타일 맞추기가 성공했는지 확인
 		if (player.get(idToIndex(target_id)).getTile().get(tileorder).getNum() == guessNum) {
-			System.out.println(id + " " + target_id + " 맞춤");
+			System.out.println(room_id+" 번 방에 있는 player "+id + "가  player " + target_id + "의 타일 "+guessNum+"을 맞춤");
 			// isOpen을 true로 바꾼다.
 			openTileFromPlayer(target_id, tileorder);
 			
@@ -291,13 +290,16 @@ public class GameManager {
 			}
 			if (cntOpen == player.get(i).getTile().size()) {
 				// 모든 타일이 뒤집혔다면 isAlive를 false로 둔다.
-				player.get(i).setAlive(false);
-				
-				JSONObject jo = new JSONObject();
-				jo.put("title", "CONTINUE");
-				send(player.get(i).getSocket(), jo);
-				
-				
+				if(player.get(i).isAlive() == true) {
+					player.get(i).setAlive(false);
+					
+					JSONObject jo = new JSONObject();
+					jo.put("title", "EXIT");
+					send(player.get(i).getSocket(), jo);
+					
+					
+				}
+		
 				
 			}
 		}
@@ -388,7 +390,7 @@ public class GameManager {
 	void checkRoomPlayerNum() throws IOException {
 		// 방에 모든 플레이어가 입장했는지 검사한다.
 		if (player.size() == limit) {
-			System.out.println(room_id + "에 " + limit + "명이 있다.");
+			System.out.println(room_id + "번 방에 " + limit + "명이 있다.");
 			initGameData();
 			startGame();
 		}
@@ -474,7 +476,7 @@ public class GameManager {
 	}
 
 	void continueOrStop(int id, boolean isContinue) throws IOException {
-		System.out.println("isContinue " + isContinue);
+		// System.out.println("isContinue " + isContinue);
 		// 플레이어가 계속 맞추겠다고 했는지 다음 턴으로 넘기겠다고 했는지 받아온다.
 		if (isContinue == true) {
 			//현재 차례 로그 출력
@@ -509,7 +511,7 @@ public class GameManager {
 		else {
 			String log = id + " 플레이어가 관전합니다.";
 			sendLog(log);
-			startTurn();
+//			startTurn();
 		}
 	}
 }

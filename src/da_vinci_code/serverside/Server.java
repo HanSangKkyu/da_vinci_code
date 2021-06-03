@@ -38,7 +38,7 @@ public class Server {
 				// 1. 소켓 생성(bind 생략 가능)
 				// 2. 접속 수락
 				Socket socket = server.accept();
-				System.out.println("접속 수락 " + socket);
+				System.out.println(socket + " 접속 수락");
 
 				// 3. 받기 전용 스레드 실행
 				Receiver receiver = new Receiver(socket, serverObj);

@@ -1,6 +1,7 @@
 package da_vinci_code.clientside;
 
 import java.io.BufferedInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.Socket;
@@ -8,6 +9,7 @@ import java.net.Socket;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+
 
 public class Receiver extends Thread {
 	private Socket socket = null;
@@ -28,7 +30,7 @@ public class Receiver extends Thread {
 			char[] arr = new char[10000];
 			reader.read(arr);
 			String msg = new String(arr).replace('\0', ' ');
-			System.out.println("[서버로 부터 받은 msg] \n" + msg);
+			// System.out.println("[서버로 부터 받은 msg] \n" + msg);
 			arr = new char[10000];
 
 			return msg;
@@ -60,13 +62,21 @@ public class Receiver extends Thread {
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+				try {
+					socket.close();
+					break;
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				
 			}
 		}
 	}
 
 	public void process(String msg) throws ParseException {
 		// 서버로부터 받은 메시지의 TITLE에 따라 작업을 수행한다.
-		System.out.println("[인식된 msg] \n" + msg);
+		// System.out.println("[인식된 msg] \n" + msg);
 
 		JSONParser parser = new JSONParser();
 		JSONObject jsonObj;
@@ -74,7 +84,7 @@ public class Receiver extends Thread {
 		// 결과 처리
 		jsonObj = (JSONObject) parser.parse(msg);
 		String title = (String) jsonObj.get("title");
-		System.out.println(title);
+		// System.out.println(title);
 		switch (title) {
 		case "GAME_INFO":
 			gameManager.updateGameInfo(jsonObj);
@@ -103,8 +113,8 @@ public class Receiver extends Thread {
 		case "LOGGER": // 로그 출력하기 
 			String s = (String) jsonObj.get("log");
 			System.out.println(s);
+			break;
 		}
-
 	}
 
 }

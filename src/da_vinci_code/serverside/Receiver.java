@@ -32,7 +32,7 @@ class Receiver extends Thread {
 			char[] arr = new char[10000];
 			reader.read(arr);
 			String msg = new String(arr).replace('\0', ' ');
-			System.out.println("[" + socket + " 가 보낸 msg] \n" + msg);
+			System.out.println(socket + " 가 보낸 msg " + msg);
 			arr = new char[10000];
 			return msg;
 
@@ -50,7 +50,7 @@ class Receiver extends Thread {
 			try {
 				jsonObj = (JSONObject) parser.parse(getMsg());
 				String title = (String) jsonObj.get("title");
-				System.out.println(title);
+				// System.out.println(title);
 				switch (title) {
 				case "ROOM_LIMIT":
 					// 클라이언트가 참가하고 싶은 방 제한인원을 받음
@@ -75,8 +75,8 @@ class Receiver extends Thread {
 					server.gameManager.get(roomIDToIdx(room_id1)).continueOrStop(id1, isContinue);
 					break;
 				case "EXIT":
-					//나갈지 말
-					int room_id2 = ((Long) jsonObj.get("rood_id")).intValue();
+					//나갈지 말지 선택한 결과를 받는다  
+					int room_id2 = ((Long) jsonObj.get("room_id")).intValue();
 					int id2 = ((Long) jsonObj.get("id")).intValue();
 					boolean isExit = (boolean) jsonObj.get("isExit");
 					server.gameManager.get(roomIDToIdx(room_id2)).exitOrStay(id2, isExit);
@@ -87,6 +87,13 @@ class Receiver extends Thread {
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+				try {
+					socket.close();
+					break;
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 			}
 		}
 
