@@ -101,7 +101,7 @@ public class GameManager {
 			writer.write(json);
 			writer.flush();
 		} catch (Exception e) {
-			System.out.println(e.toString());
+			// System.out.println(e.toString());
 		}
 
 		return;
@@ -192,7 +192,7 @@ public class GameManager {
 				send(player.get(i).getSocket(),jsonObj);
 			}
 			 catch (Exception e) {
-					System.out.println(e.toString());
+					// System.out.println(e.toString());
 			}
 		}
 	}
@@ -451,7 +451,7 @@ public class GameManager {
 				send(player.get(t).getSocket(), jsonObj);
 
 			} catch (Exception e) {
-				System.out.println(e.toString());
+				// System.out.println(e.toString());
 			}
 		}
 

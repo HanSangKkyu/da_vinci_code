@@ -112,7 +112,7 @@ public class GameManager {
 			writer.write(json);
 			writer.flush();
 		} catch (Exception e) {
-			System.out.println(e.toString());
+			// System.out.println(e.toString());
 		}
 
 		return;
@@ -314,7 +314,7 @@ public class GameManager {
 					Main();
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
-					e.printStackTrace();
+					// e.printStackTrace();
 				}
 				break;
 			}
@@ -474,7 +474,7 @@ public class GameManager {
 			Main();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			// e.printStackTrace();
 		}
 		
 	}

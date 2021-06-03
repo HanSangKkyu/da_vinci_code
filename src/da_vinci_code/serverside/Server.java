@@ -46,7 +46,7 @@ public class Server {
 
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
+			// e.printStackTrace();
 		}
 
 	}

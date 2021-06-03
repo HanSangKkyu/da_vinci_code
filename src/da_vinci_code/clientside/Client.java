@@ -29,7 +29,7 @@ public class Client {
 			BufferedOutputStream bos = new BufferedOutputStream(os);
 			writer = new OutputStreamWriter(bos, "UTF-8");
 		} catch (Exception e) {
-			System.out.println(e.toString());
+			// System.out.println(e.toString());
 		}
 
 		return writer;
@@ -56,7 +56,7 @@ public class Client {
 					receiver.start();
 
 				} catch (Exception e) {
-					System.out.println(e.toString());
+					// System.out.println(e.toString());
 				}
 				break;
 			} else if (select == 2) {
@@ -91,7 +91,7 @@ public class Client {
 					writer.flush();
 
 				} catch (Exception e) {
-					System.out.println(e.toString());
+					// System.out.println(e.toString());
 				}
 
 				Wait();

@@ -58,7 +58,7 @@ public class Server {
 
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
+			// e.printStackTrace();
 		}
 
 	}
@@ -71,7 +71,7 @@ public class Server {
 			BufferedOutputStream bos = new BufferedOutputStream(os);
 			writer = new OutputStreamWriter(bos, "UTF-8");
 		} catch (Exception e) {
-			System.out.println(e.toString());
+			// System.out.println(e.toString());
 		}
 
 		return writer;
@@ -110,7 +110,7 @@ class ServerReceiver extends Thread {
 //	            }
 
 		} catch (Exception e) {
-			System.out.println(e.toString());
+			// System.out.println(e.toString());
 		}
 	}
 
@@ -143,7 +143,7 @@ class ServerSender extends Thread {
 
 			// scan.close();
 		} catch (Exception e) {
-			System.out.println(e.toString());
+			// System.out.println(e.toString());
 		}
 	}
 

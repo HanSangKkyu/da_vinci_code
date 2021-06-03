@@ -36,7 +36,7 @@ public class Receiver extends Thread {
 			return msg;
 
 		} catch (Exception e) {
-			System.out.println(e.toString());
+			// System.out.println(e.toString());
 		}
 		return null;
 	}
@@ -61,13 +61,13 @@ public class Receiver extends Thread {
 
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
+				// e.printStackTrace();
 				try {
 					socket.close();
 					break;
 				} catch (IOException e1) {
 					// TODO Auto-generated catch block
-					e1.printStackTrace();
+					// e1.printStackTrace();
 				}
 				
 			}
